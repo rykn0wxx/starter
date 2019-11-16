@@ -2,13 +2,14 @@ const path = require('path')
 const Webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const devMode = process.env.NODE_ENV !== 'production'
 
 module.exports = {
   mode: 'development',
   entry: './src/index.js',
   output: {
-    filename: 'main.js',
+    filename: 'main-[hash].js',
     path: path.resolve(__dirname, 'dist')
   },
   module: {
@@ -49,9 +50,28 @@ module.exports = {
               hmr: process.env.NODE_ENV === 'development'
             }
           },
-          'css-loader',
-          'postcss-loader',
-          'sass-loader'
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: false,
+              importLoaders: 1
+            }
+          },
+          // Translates PostCSS
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              sourceMap: false
+            }
+          },
+          // Compiles Sass to CSS
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: false
+            }
+          }
         ]
       }
       // {
@@ -90,6 +110,7 @@ module.exports = {
     new Webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development')
     }),
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: devMode ? '[name].css' : '[name].[hash].css',
       chunkFilename: devMode ? '[id].css' : '[id].[hash].css'
