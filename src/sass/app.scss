@@ -1,0 +1,6 @@
+@import './config/variables';
+@import './theme/main';
+
+body {
+  background-color: $bg;
+}
